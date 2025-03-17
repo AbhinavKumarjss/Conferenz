@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conferenz</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1><i class="fas fa-video"></i> Conferenz</h1>
+      <p class="tagline">Secure, simple video conferencing</p>
+    </header>
+    
+    <div class="entry-container" id="entry">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="join">Join Meeting</button>
+        <button class="tab-btn" data-tab="create">Create Meeting</button>
+        <button class="tab-btn" data-tab="browse">Browse Rooms</button>
+      </div>
+      
+      <div class="tab-content active" id="join-tab">
+        <h2>Join a Meeting</h2>
+        <div class="room-entry">
+          <input type="text" id="roomId" placeholder="Enter room ID">
+          <input type="text" id="displayName" placeholder="Your display name">
+          <button id="joinBtn" class="primary-btn"><i class="fas fa-sign-in-alt"></i> Join Room</button>
+        </div>
+      </div>
+      
+      <div class="tab-content" id="create-tab">
+        <h2>Create a Meeting</h2>
+        <div class="room-entry">
+          <input type="text" id="createDisplayName" placeholder="Your display name">
+          <div class="option-group">
+            <label>
+              <input type="checkbox" id="roomPassword"> Require password
+            </label>
+            <input type="password" id="passwordInput" placeholder="Room password" disabled>
+          </div>
+          <button id="createBtn" class="primary-btn"><i class="fas fa-plus-circle"></i> Create Room</button>
+        </div>
+      </div>
+      
+      <div class="tab-content" id="browse-tab">
+        <h2>Active Rooms</h2>
+        <div id="roomsList" class="rooms-list">
+          <p class="loading">Loading rooms...</p>
+        </div>
+        <button id="refreshRooms" class="secondary-btn"><i class="fas fa-sync"></i> Refresh</button>
+      </div>
+      
+      <div class="help-links">
+        <a href="troubleshoot.html">Connection Issues? Check Our Troubleshooter</a>
+      </div>
+    </div>
+
+    <div class="call-container hidden" id="call">
+      <div class="call-header">
+        <h2>Room: <span id="roomDisplay"></span> <span id="participantCount" class="participant-count">0</span></h2>
+        <div class="meeting-info">
+          <span id="meetingDuration">00:00:00</span>
+        </div>
+      </div>
+      
+      <div class="video-grid" id="videoGrid">
+        <div class="video-item local-video">
+          <div class="video-header">
+            <span class="participant-name">You</span>
+            <span class="connection-status"></span>
+          </div>
+          <video id="localVideo" autoplay muted playsinline></video>
+          <div class="video-controls">
+            <button class="mic-status on"><i class="fas fa-microphone"></i></button>
+            <button class="cam-status on"><i class="fas fa-video"></i></button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="controls-bar">
+        <div class="control-group">
+          <button id="muteBtn" class="control-btn"><i class="fas fa-microphone"></i></button>
+          <span class="control-label">Mute</span>
+        </div>
+        <div class="control-group">
+          <button id="videoBtn" class="control-btn"><i class="fas fa-video"></i></button>
+          <span class="control-label">Video</span>
+        </div>
+        <div class="control-group">
+          <button id="screenShareBtn" class="control-btn"><i class="fas fa-desktop"></i></button>
+          <span class="control-label">Share</span>
+        </div>
+        <div class="control-group">
+          <button id="chatBtn" class="control-btn"><i class="fas fa-comment"></i></button>
+          <span class="control-label">Chat</span>
+        </div>
+        <div class="control-group">
+          <button id="participantsBtn" class="control-btn"><i class="fas fa-users"></i></button>
+          <span class="control-label">People</span>
+        </div>
+        <div class="control-group">
+          <button id="leaveBtn" class="control-btn leave-btn"><i class="fas fa-phone-slash"></i></button>
+          <span class="control-label">Leave</span>
+        </div>
+      </div>
+      
+      <div class="side-panel hidden" id="chatPanel">
+        <div class="panel-header">
+          <h3><i class="fas fa-comment"></i> Chat</h3>
+          <button class="close-panel"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input">
+          <input type="text" id="messageInput" placeholder="Type message...">
+          <button id="sendMessageBtn"><i class="fas fa-paper-plane"></i></button>
+        </div>
+      </div>
+      
+      <div class="side-panel hidden" id="participantsPanel">
+        <div class="panel-header">
+          <h3><i class="fas fa-users"></i> Participants</h3>
+          <button class="close-panel"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="participants-list" id="participantsList"></div>
+      </div>
+      
+      <div class="side-panel hidden" id="settingsPanel">
+        <div class="panel-header">
+          <h3><i class="fas fa-cog"></i> Settings</h3>
+          <button class="close-panel"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="settings-content">
+          <div class="setting-group">
+            <label for="audioInput">Microphone</label>
+            <select id="audioInput"></select>
+          </div>
+          <div class="setting-group">
+            <label for="videoInput">Camera</label>
+            <select id="videoInput"></select>
+          </div>
+          <div class="setting-group">
+            <label for="audioOutput">Speaker</label>
+            <select id="audioOutput"></select>
+          </div>
+          <button id="applySettings" class="primary-btn">Apply</button>
+        </div>
+      </div>
+      
+      <div class="debug-container">
+        <h4>Connection Status: <span id="connectionStatus">Not Connected</span></h4>
+        <div id="toggleDebugBtn"></div>
+        <!-- <button id="toggleDebugBtn">Show Debug Log</button> -->
+        <div id="debugLog" class="hidden">
+          <textarea id="logContent" readonly rows="10"></textarea>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Templates -->
+    <template id="remoteVideoTemplate">
+      <div class="video-item remote-video">
+        <div class="video-header">
+          <span class="participant-name"></span>
+          <span class="connection-status"></span>
+        </div>
+        <video autoplay playsinline></video>
+        <div class="video-controls">
+          <span class="mic-status on"><i class="fas fa-microphone"></i></span>
+          <span class="cam-status on"><i class="fas fa-video"></i></span>
+        </div>
+      </div>
+    </template>
+    
+    <template id="chatMessageTemplate">
+      <div class="chat-message">
+        <div class="message-header">
+          <span class="message-sender"></span>
+          <span class="message-time"></span>
+        </div>
+        <div class="message-content"></div>
+      </div>
+    </template>
+    
+    <template id="participantTemplate">
+      <div class="participant-item">
+        <span class="participant-name"></span>
+        <div class="participant-controls">
+          <button class="mic-control"><i class="fas fa-microphone"></i></button>
+          <button class="video-control"><i class="fas fa-video"></i></button>
+        </div>
+      </div>
+    </template>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="app.js"></script>
+</body>
+</html> 

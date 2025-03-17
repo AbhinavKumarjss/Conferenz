@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conferenz - Troubleshooter</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    .troubleshoot-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .troubleshoot-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .troubleshoot-header h1 {
+      color: var(--dark-bg);
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    .troubleshoot-header p {
+      color: #666;
+      font-size: 1.1rem;
+    }
+
+    .troubleshoot-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .troubleshoot-card {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .troubleshoot-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--primary-color);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+    }
+
+    .card-icon i {
+      color: white;
+      font-size: 1.5rem;
+    }
+
+    .card-title {
+      font-size: 1.3rem;
+      color: var(--dark-bg);
+      margin: 0;
+    }
+    
+    .test-button {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: 100%;
+      margin-top: 15px;
+    }
+
+    .test-button:hover {
+      background: var(--primary-dark);
+    }
+    
+    .status {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      display: none;
+    }
+
+    .status.checking {
+      display: block;
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeeba;
+    }
+
+    .status.success {
+      display: block;
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .status.error {
+      display: block;
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .device-info {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .test-video {
+      width: 100%;
+      height: 200px;
+      background: #000;
+      border-radius: 8px;
+      margin-top: 15px;
+      display: none;
+    }
+
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      padding: 10px 20px;
+      background: transparent;
+      border: 1px solid var(--primary-color);
+      color: var(--primary-color);
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      margin-bottom: 20px;
+    }
+
+    .back-button:hover {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .back-button i {
+      margin-right: 8px;
+    }
+
+    .network-info {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .network-stat {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .network-stat:last-child {
+      border-bottom: none;
+    }
+
+    .stat-label {
+      color: #666;
+    }
+
+    .stat-value {
+      font-weight: 500;
+    }
+
+    .help-section {
+      margin-top: 40px;
+      padding: 25px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .help-section h2 {
+      color: var(--dark-bg);
+      margin-bottom: 20px;
+    }
+
+    .faq-item {
+      margin-bottom: 20px;
+    }
+
+    .faq-question {
+      font-weight: 500;
+      color: var(--dark-bg);
+      margin-bottom: 10px;
+    }
+
+    .faq-answer {
+      color: #666;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="troubleshoot-container">
+    <a href="/" class="back-button">
+      <i class="fas fa-arrow-left"></i> Back to Meeting
+    </a>
+
+    <div class="troubleshoot-header">
+      <h1><i class="fas fa-tools"></i> Conferenz Troubleshooter</h1>
+      <p>Let's make sure everything is working properly for your meeting</p>
+    </div>
+
+    <div class="troubleshoot-grid">
+      <!-- Browser Compatibility Check -->
+      <div class="troubleshoot-card">
+        <div class="card-header">
+          <div class="card-icon">
+            <i class="fas fa-globe"></i>
+          </div>
+          <h2 class="card-title">Browser Check</h2>
+        </div>
+        <p>Check if your browser supports all required features</p>
+        <button id="checkBrowserBtn" class="test-button">
+          <i class="fas fa-check-circle"></i> Check Browser
+        </button>
+        <div id="browserStatus" class="status"></div>
+      </div>
+      
+      <!-- Camera and Microphone Test -->
+      <div class="troubleshoot-card">
+        <div class="card-header">
+          <div class="card-icon">
+            <i class="fas fa-camera"></i>
+          </div>
+          <h2 class="card-title">Media Devices</h2>
+        </div>
+        <p>Test your camera and microphone</p>
+        <button id="checkMediaBtn" class="test-button">
+          <i class="fas fa-video"></i> Test Devices
+        </button>
+        <video id="testVideo" class="test-video" autoplay muted playsinline></video>
+        <div id="mediaStatus" class="status"></div>
+      </div>
+      
+      <!-- Network Test -->
+      <div class="troubleshoot-card">
+        <div class="card-header">
+          <div class="card-icon">
+            <i class="fas fa-network-wired"></i>
+          </div>
+          <h2 class="card-title">Network Test</h2>
+        </div>
+        <p>Check your internet connection</p>
+        <button id="checkNetworkBtn" class="test-button">
+          <i class="fas fa-wifi"></i> Test Connection
+        </button>
+        <div id="networkStatus" class="status"></div>
+        <div id="networkInfo" class="network-info"></div>
+      </div>
+
+      <!-- System Information -->
+      <div class="troubleshoot-card">
+        <div class="card-header">
+          <div class="card-icon">
+            <i class="fas fa-laptop"></i>
+          </div>
+          <h2 class="card-title">System Info</h2>
+        </div>
+        <p>View your system information</p>
+        <div id="systemInfo" class="network-info">
+          <div class="network-stat">
+            <span class="stat-label">Operating System:</span>
+            <span class="stat-value" id="osInfo">Checking...</span>
+          </div>
+          <div class="network-stat">
+            <span class="stat-label">Browser:</span>
+            <span class="stat-value" id="browserInfo">Checking...</span>
+          </div>
+          <div class="network-stat">
+            <span class="stat-label">WebRTC Version:</span>
+            <span class="stat-value" id="webrtcInfo">Checking...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Help Section -->
+    <div class="help-section">
+      <h2>Common Issues & Solutions</h2>
+      
+      <div class="faq-item">
+        <div class="faq-question">Camera or microphone not working?</div>
+        <div class="faq-answer">
+          1. Make sure you've granted permission in your browser<br>
+          2. Check if another application is using your camera<br>
+          3. Try selecting a different device in the meeting settings
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question">Poor video quality?</div>
+        <div class="faq-answer">
+          1. Check your internet connection speed<br>
+          2. Close other bandwidth-heavy applications<br>
+          3. Try moving closer to your Wi-Fi router
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question">Echo in the meeting?</div>
+        <div class="faq-answer">
+          1. Use headphones to prevent audio feedback<br>
+          2. Ask other participants to mute when not speaking<br>
+          3. Reduce the volume of your speakers
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // System Information
+    function populateSystemInfo() {
+      // OS Info
+      const os = navigator.platform || 'Unknown';
+      document.getElementById('osInfo').textContent = os;
+
+      // Browser Info
+      const userAgent = navigator.userAgent;
+      let browserInfo = 'Unknown';
+      if (userAgent.includes('Chrome')) browserInfo = 'Chrome';
+      else if (userAgent.includes('Firefox')) browserInfo = 'Firefox';
+      else if (userAgent.includes('Safari')) browserInfo = 'Safari';
+      else if (userAgent.includes('Edge')) browserInfo = 'Edge';
+      document.getElementById('browserInfo').textContent = browserInfo;
+
+      // WebRTC Version (based on browser)
+      const webrtcInfo = RTCPeerConnection.prototype.getConfiguration ? 'Latest' : 'Legacy';
+      document.getElementById('webrtcInfo').textContent = webrtcInfo;
+    }
+
+    // Browser Compatibility Check
+    document.getElementById('checkBrowserBtn').addEventListener('click', () => {
+    const browserStatus = document.getElementById('browserStatus');
+      browserStatus.textContent = 'Checking...';
+      browserStatus.className = 'status checking';
+      
+      setTimeout(() => {
+        const requirements = {
+          webrtc: !!window.RTCPeerConnection,
+          getUserMedia: !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia),
+          screen: !!navigator.mediaDevices.getDisplayMedia,
+          webSocket: !!window.WebSocket
+        };
+
+        const allPassed = Object.values(requirements).every(req => req);
+
+        if (allPassed) {
+          browserStatus.textContent = '✅ Your browser is fully compatible!';
+          browserStatus.className = 'status success';
+        } else {
+          const missing = Object.entries(requirements)
+            .filter(([, supported]) => !supported)
+            .map(([feature]) => feature)
+            .join(', ');
+          browserStatus.textContent = `❌ Missing features: ${missing}`;
+          browserStatus.className = 'status error';
+        }
+      }, 1000);
+    });
+
+    // Media Devices Check
+    document.getElementById('checkMediaBtn').addEventListener('click', async () => {
+      const mediaStatus = document.getElementById('mediaStatus');
+      const testVideo = document.getElementById('testVideo');
+      
+      mediaStatus.textContent = 'Checking devices...';
+      mediaStatus.className = 'status checking';
+      testVideo.style.display = 'none';
+      
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        testVideo.srcObject = stream;
+        testVideo.style.display = 'block';
+        
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(device => device.kind === 'videoinput');
+        const audioDevices = devices.filter(device => device.kind === 'audioinput');
+
+        mediaStatus.innerHTML = `✅ Devices working properly!<br>
+          <div class="device-info">
+            📸 Cameras found: ${videoDevices.length}<br>
+            🎤 Microphones found: ${audioDevices.length}
+          </div>`;
+        mediaStatus.className = 'status success';
+      } catch (error) {
+        mediaStatus.textContent = `❌ Error: ${error.message}`;
+        mediaStatus.className = 'status error';
+      }
+    });
+
+    // Network Test
+    document.getElementById('checkNetworkBtn').addEventListener('click', async () => {
+      const networkStatus = document.getElementById('networkStatus');
+      const networkInfo = document.getElementById('networkInfo');
+      
+      networkStatus.textContent = 'Testing connection...';
+      networkStatus.className = 'status checking';
+      networkInfo.innerHTML = '';
+
+      try {
+        // Test multiple endpoints to ensure reliability
+        const endpoints = [
+          '/api/health', // Local server health check
+          'https://www.cloudflare.com/cdn-cgi/trace', // Cloudflare's trace endpoint
+          'https://www.google.com/favicon.ico' // Fallback to Google
+        ];
+
+        let successfulTest = false;
+        let latency = 0;
+
+        for (const endpoint of endpoints) {
+          try {
+            const startTime = performance.now();
+            const response = await fetch(endpoint, {
+              mode: endpoint.startsWith('/') ? 'same-origin' : 'no-cors',
+              cache: 'no-store'
+            });
+            const endTime = performance.now();
+            latency = Math.round(endTime - startTime);
+            
+            if (response.ok || response.status === 0) { // status 0 is ok for no-cors
+              successfulTest = true;
+              break;
+            }
+          } catch (e) {
+            console.log(`Failed to test endpoint ${endpoint}:`, e);
+            // Continue to next endpoint
+          }
+        }
+
+        if (successfulTest) {
+          networkStatus.textContent = '✅ Connection is working!';
+          networkStatus.className = 'status success';
+          
+          // Get connection information
+          const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+          let connectionInfo = '';
+          
+          if (connection) {
+            connectionInfo = `
+              <div class="network-stat">
+                <span class="stat-label">Connection Type:</span>
+                <span class="stat-value">${connection.effectiveType || 'Unknown'}</span>
+              </div>
+              <div class="network-stat">
+                <span class="stat-label">Downlink Speed:</span>
+                <span class="stat-value">${connection.downlink || 'Unknown'} Mbps</span>
+              </div>
+            `;
+          }
+
+          // Add WebRTC connection test
+          const rtcPeerConnection = new RTCPeerConnection({
+            iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+          });
+          
+          let webrtcStatus = 'Checking...';
+          rtcPeerConnection.createDataChannel('test');
+          
+          try {
+            const offer = await rtcPeerConnection.createOffer();
+            await rtcPeerConnection.setLocalDescription(offer);
+            webrtcStatus = '✅ Working';
+          } catch (e) {
+            webrtcStatus = '⚠️ Limited';
+          } finally {
+            rtcPeerConnection.close();
+          }
+
+          networkInfo.innerHTML = `
+            <div class="network-stat">
+              <span class="stat-label">Latency:</span>
+              <span class="stat-value">${latency}ms</span>
+            </div>
+            <div class="network-stat">
+              <span class="stat-label">WebRTC Status:</span>
+              <span class="stat-value">${webrtcStatus}</span>
+            </div>
+            ${connectionInfo}
+          `;
+        } else {
+          throw new Error('All network tests failed');
+        }
+      } catch (error) {
+        // Check if we actually have internet by testing the navigator.onLine property
+        if (navigator.onLine) {
+          networkStatus.textContent = '⚠️ Limited connectivity detected';
+          networkStatus.className = 'status checking';
+          networkInfo.innerHTML = `
+            <div class="network-stat">
+              <span class="stat-label">Status:</span>
+              <span class="stat-value">Connected with limited access</span>
+            </div>
+            <div class="network-stat">
+              <span class="stat-label">Note:</span>
+              <span class="stat-value">Some features may be restricted by your network</span>
+            </div>
+          `;
+        } else {
+          networkStatus.textContent = '❌ No internet connection detected';
+          networkStatus.className = 'status error';
+        }
+      }
+    });
+
+    // Initialize
+    populateSystemInfo();
+  </script>
+</body>
+</html> 
